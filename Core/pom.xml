@@ -38,6 +38,11 @@
 	</repositories>
 	<dependencies>
 		<dependency>
+			<groupId>org.htmlparser</groupId>
+			<artifactId>htmlparser</artifactId>
+			<version>2.1</version>
+		</dependency>
+		<dependency>
 			<groupId>com.alibaba.cloudapi</groupId>
 			<artifactId>alibaba-cloudapi-sdk-core</artifactId>
 			<version>1.0.1</version>

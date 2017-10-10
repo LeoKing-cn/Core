@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans:beans xmlns="http://www.springframework.org/schema/security"
+	xmlns:beans="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.3.xsd 
+	http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-3.2.xsd">
+
+
+	<!-- 开发环境可以放置 <debug /> 配置，会输出详细Security处理日志，正式环境建议屏蔽 <debug /> 配置 <debug 
+		/> -->
+	<http pattern="/index.html" security="none" />
+	<http pattern="/index/**" security="none" />
+	<http pattern="/MP_verify_Sw4bpqo5hxbhAKKr.txt" security="none" />
+	<http pattern="/portal/**" security="none" />
+	<http pattern="/wxLogin/auth" security="none" />
+	<http pattern="/wxLogin/authCallBack" security="none" />
+	<http pattern="/goods/**" security="none" />
+	<http pattern="/js/**" security="none" />
+	<http pattern="/css/**" security="none" />
+	<http pattern="/images/**" security="none" />
+
+	<!-- use-expressions="true" 的意思是开启表达式 access-denied-page的意思是，当验证权限失败后会跳转到的页面 -->
+	<http use-expressions="true" auto-config="false"
+		entry-point-ref="myAuthenticationEntryPoint" access-denied-page="/user/register">
+
+
+		<!-- 登出管理 logout-url 属性:这个指定的URL会触发注销操作，默认是 /j_spring_security_logout invalidate-session 
+			属性：如果为true，在注销的时候会销毁会话 delete-cookies 属性：以逗号分隔的cookies名称，在用户注销时删除指定的cookies -->
+		<logout logout-success-url="/j_spring_security_logout"
+			logout-url="/login.html" invalidate-session="true" delete-cookies="JSESSIONID" />
+
+
+		<!-- session超时跳转页面 以及每用户可拥有的session最大个数 如果每次退出后，必须要求用户必须重开浏览器才能登录，可以将 invalid-session-url="/logout.jsp"， 
+			防止有些 Web 应用把用户的会话标识符直接通过 URL 的参数来传递 -->
+		<!-- 会话管理 -->
+		<session-management>
+			<concurrency-control max-sessions="1"
+				error-if-maximum-exceeded="true" />
+		</session-management>
+
+		<!-- Spring Sercurity要从数据库中获取用户、权限、资源来实现权限管理，需要自定义过滤器， 并且该过滤器必须在spring 
+			Security执行FILTER_SECURITY_INTERCEPTOR过滤器之前执行， 因为该框架实现权限管理实质就是在执行action之前先执行它框架中的为权限管理制定的一系列Fliter。 
+			我们自定的这个SercurityFilter类要继承AbstractSecurityInterceptor 接口和Filter类（负责传递一系列的Filter）, 
+			因为我们是从数据库中获取权限验证的数据，所以还要重写FilterInvocationSecurityMetadataSource 接口， AccessDecisionManager 
+			接口，UserDetailsService 接口，只要重写了这3个接口， 然后再spring配置文件中做相应的配置，项目启动启动后，我们进行资源请求，就自动会去执行我们重定义的类进行权限判断。 -->
+		<custom-filter ref="mySecurityFilter" before="FILTER_SECURITY_INTERCEPTOR" />
+	</http>
+
+	<!-- 未登录的切入点 -->
+	<beans:bean id="myAuthenticationEntryPoint"
+		class="org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint">
+		<beans:property name="useForward" value="true"></beans:property>
+		<beans:property name="loginFormUrl" value="/wxLogin/auth"></beans:property>
+	</beans:bean>
+
+	<!-- 实现了UserDetailsService的Bean 用户拥有的权限：登录后取得用户所保有的权限信息 //认证管理器 -->
+	<authentication-manager alias="myAuthenticationManager">
+		<authentication-provider user-service-ref="myUserDetailServiceImpl" />
+	</authentication-manager>
+
+
+</beans:beans>	
