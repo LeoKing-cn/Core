@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.core.dao.LoginDao">
+	<resultMap id="coreUser" type="com.core.comm.entity.CoreUser">
+	    <id column="id" jdbcType="INTEGER" property="id" />
+	    <result column="name" jdbcType="VARCHAR" property="name" />
+	    <result column="age" jdbcType="VARCHAR" property="age" />
+	    <result column="sex" jdbcType="VARCHAR" property="sex" />
+	    <result column="telephone" jdbcType="VARCHAR" property="telephone" />
+	    <result column="adress" jdbcType="VARCHAR" property="adress" />
+	    <result column="role" jdbcType="VARCHAR" property="role" />
+	    <result column="email" jdbcType="VARCHAR" property="email" />
+	    <result column="password" jdbcType="VARCHAR" property="password" />
+	</resultMap>
+	<select id="selectById" resultMap="coreUser" parameterType="java.lang.Integer">
+		SELECT     id, name, age, openid, sex, telephone, adress, role, 
+		    email, password
+		FROM core_user
+		where core_user.id=#{id}
+	</select>
+
+	<insert id="insertUser" parameterType="com.core.comm.entity.CoreUser"> 
+	    insert into core_user (id, name, age, sex, telephone, adress, role, email, password)
+	    values (#{id,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR}, #{age,jdbcType=VARCHAR}, 
+	      #{sex,jdbcType=VARCHAR}, #{telephone,jdbcType=VARCHAR}, #{adress,jdbcType=VARCHAR}, 
+	      #{role,jdbcType=VARCHAR}, #{email,jdbcType=VARCHAR}, #{password,jdbcType=VARCHAR})
+	</insert>
+	
+</mapper>
